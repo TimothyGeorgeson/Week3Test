@@ -128,13 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static void printOrgChart(ArrayList<String> input)
     {
-        String[] strArr1 = input.get(0).split(",");
-        String[] strArr2 = input.get(1).split(",");
-        String[] strArr3 = input.get(2).split(",");
-        String[] strArr4 = input.get(3).split(",");
-
         ArrayList<String> leaders = new ArrayList<>();
-        ArrayList<String> sortedList = new ArrayList<>();
+        ArrayList<String> tempList = new ArrayList<>();
         String temp = "";
 
         for (int i = 0; i < input.size(); i++) {
@@ -149,30 +144,40 @@ public class MainActivity extends AppCompatActivity {
                 {
                     if (j == 2)
                         leaders.add(temp);
-                    sortedList.add(temp);
+                    tempList.add(temp);
                     temp = "";
                 }
             }
-            sortedList.add(temp);
+            tempList.add(temp);
             temp = "";
         }
 
-        for (int i = 0; i < sortedList.size(); i++) {
-            temp = sortedList.get(i);
+        for (int i = 0; i < leaders.size(); i++) {
+            temp = leaders.get(i);
 
             int j = i - 1;
-            while (j >= 0 && (int)temp.charAt(1) < (int)sortedList.get(j).charAt(1))
+            while (j >= 0 && (int)temp.charAt(1) < (int)leaders.get(j).charAt(1))
             {
-                sortedList.set(j+1, sortedList.get(j));
+                leaders.set(j+1, leaders.get(j));
                 j--;
             }
-            sortedList.set(j+1, temp);
+            leaders.set(j+1, temp);
+        }
+
+        for (int i = 0; i < leaders.size(); i++) {
+            for (int j = 0; j < input.size(); j++) {
+                
+            }
+        }
+
+        for (int i = 0; i < leaders.size() ; i++) {
+            System.out.print(leaders.get(i));
         }
 
         int offsetCount = 0;
-        for (int i = 0; i < sortedList.size(); i++) {
-            System.out.print(sortedList.get(i));
-            if (leaders.contains(sortedList.get(i)))
+        for (int i = 0; i < tempList.size(); i++) {
+            System.out.print(tempList.get(i));
+            if (leaders.contains(tempList.get(i)))
             {
                 System.out.println();
                 offsetCount++;
