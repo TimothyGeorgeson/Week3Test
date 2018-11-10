@@ -1,5 +1,7 @@
 package com.example.consultants.week3test;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -13,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void main(String[] args) {
 
         Room[][] verticalTrue = new Room[][] {
@@ -126,73 +129,48 @@ public class MainActivity extends AppCompatActivity {
         printOrgChart(input);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private static void printOrgChart(ArrayList<String> input)
     {
         ArrayList<String> leaders = new ArrayList<>();
+        ArrayList<String> sortedList = new ArrayList<>();
         ArrayList<String> tempList = new ArrayList<>();
         String temp = "";
 
         for (int i = 0; i < input.size(); i++) {
-            String str = input.get(i);
-            for (int j = 0; j < str.length(); j++)
-            {
-                if (str.charAt(j) != ',')
-                {
-                    temp += str.charAt(j);
-                }
-                else
-                {
-                    if (j == 2)
-                        leaders.add(temp);
-                    tempList.add(temp);
-                    temp = "";
-                }
-            }
-            tempList.add(temp);
-            temp = "";
-        }
-
-        for (int i = 0; i < leaders.size(); i++) {
-            temp = leaders.get(i);
+            temp = input.get(i);
 
             int j = i - 1;
-            while (j >= 0 && (int)temp.charAt(1) < (int)leaders.get(j).charAt(1))
+            while (j >= 0 && (int)temp.charAt(1) < (int)input.get(j).charAt(1))
             {
-                leaders.set(j+1, leaders.get(j));
+                input.set(j+1, input.get(j));
                 j--;
             }
-            leaders.set(j+1, temp);
+            input.set(j+1, temp);
         }
 
-        for (int i = 0; i < leaders.size(); i++) {
-            for (int j = 0; j < input.size(); j++) {
-                
-            }
-        }
-
-        for (int i = 0; i < leaders.size() ; i++) {
-            System.out.print(leaders.get(i));
-        }
-
-        int offsetCount = 0;
-        for (int i = 0; i < tempList.size(); i++) {
-            System.out.print(tempList.get(i));
-            if (leaders.contains(tempList.get(i)))
+        for (int i = 0; i < input.size(); i++) {
+            String[] strArr = input.get(i).split(",");
+            Node<String> root = new Node<>(strArr[0]);
+            for (int j = 1; j < strArr.length; j++)
             {
-                System.out.println();
-                offsetCount++;
-                for (int j = 0; j < offsetCount; j++) {
-                    offset();
-                }
+                root.addChild(new Node<>(strArr[j]));
             }
+
+            printTree(root, "    ");
         }
 
+//        for (int i = 0; i < input.size() ; i++) {
+//            System.out.print(input.get(i).charAt(0) + input.get(i).charAt(1));
+//            System.out.println(input.get(i));
+//        }
+
     }
 
-    private static void offset()
-    {
-        System.out.print("    ");
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private static <T> void printTree(Node<T> node, String appender) {
+        System.out.println(appender + node.getData());
+        node.getChildren().forEach(each ->  printTree(each, appender + appender));
     }
-
 
 }
