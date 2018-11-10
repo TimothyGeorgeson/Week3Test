@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -132,11 +134,8 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void printOrgChart(ArrayList<String> input)
     {
-        ArrayList<String> leaders = new ArrayList<>();
-        ArrayList<String> sortedList = new ArrayList<>();
-        ArrayList<String> tempList = new ArrayList<>();
+        //sorting the initial input strings
         String temp = "";
-
         for (int i = 0; i < input.size(); i++) {
             temp = input.get(i);
 
@@ -149,24 +148,36 @@ public class MainActivity extends AppCompatActivity {
             input.set(j+1, temp);
         }
 
-        for (int i = 0; i < input.size(); i++) {
-            String[] strArr = input.get(i).split(",");
-            Node<String> root = new Node<>(strArr[0]);
-            for (int j = 1; j < strArr.length; j++)
-            {
-                root.addChild(new Node<>(strArr[j]));
-            }
-
-            printTree(root, "    ");
-        }
-
-//        for (int i = 0; i < input.size() ; i++) {
-//            System.out.print(input.get(i).charAt(0) + input.get(i).charAt(1));
-//            System.out.println(input.get(i));
-//        }
-
+        //set root of tree
+        String[] strArr = input.get(0).split(",");
+        Node<String> root = new Node<>(strArr[0]);
+        //get root's first layer of children
+        ArrayList<String> children = new ArrayList<String>(Arrays.asList(strArr));
+        children.remove(0);
+        //recursively add rest of children to tree
+        addChildren(root, children, input);
+        //prints tree
+        printTree(root, "    ");
     }
 
+    private static void addChildren(Node<String> parent, ArrayList<String> children, ArrayList<String> input)
+    {
+        for (int i = 0; i < children.size(); i++) {
+            Node<String> child = new Node<>(children.get(i));
+            parent.addChild(child);
+            for (int j = 0; j < input.size(); j++) {
+                String[] strArr = input.get(j).split(",");
+                if (children.get(i).equals(strArr[0]))
+                {
+                    ArrayList<String> childChildren = new ArrayList<String>(Arrays.asList(strArr));
+                    childChildren.remove(0);
+                    addChildren(child, childChildren, input);
+                }
+            }
+        }
+    }
+
+    //prints tree, used lambda expressions that had an API lvl requirement
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static <T> void printTree(Node<T> node, String appender) {
         System.out.println(appender + node.getData());
